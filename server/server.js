@@ -66,7 +66,7 @@ app.get('/api/validation-rules', async (req, res) => {
   try {
     const conn = getSfConnection();
     // Querying ValidationRule metadata via Tooling API
-    const query = "SELECT Id, Active, Description, EntityDefinition.DeveloperName FROM ValidationRule WHERE EntityDefinition.DeveloperName = 'Account'";
+    const query = "SELECT Id,ValidationName, Active, Description, EntityDefinition.DeveloperName FROM ValidationRule WHERE EntityDefinition.DeveloperName = 'Account'";
     const result = await conn.tooling.query(query);
     console.log("VALIDATION RULE RESULT:");
     console.log(result.records);
@@ -98,22 +98,25 @@ app.post("/api/toggle/:id", async (req, res) => {
 
 // 4. Update/Deploy Validation Rule State
 app.post('/api/validation-rules/deploy', async (req, res) => {
-  const { rules } = req.body; // Array of { id, active }
   try {
+    console.log("DEPLOY REQUEST:");
+    console.log(req.body);
+
     const conn = getSfConnection();
 
-    // Tooling API updates can be batched up to 100 records
-    const updateRecords = rules.map(rule => ({
-      Id: rule.id,
-      Metadata: {
-        active: rule.active
-      }
-    }));
+    const results = await conn.tooling.update(
+      'ValidationRule',
+      req.body.rules
+    );
 
-    const results = await conn.tooling.update('ValidationRule', updateRecords);
-    res.json({ success: true, results });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.log("DEPLOY RESULT:");
+    console.log(results);
+
+    res.json(results);
+  } catch (err) {
+    console.error("DEPLOY ERROR:");
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
