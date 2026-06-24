@@ -118,3 +118,6 @@ app.post('/api/validation-rules/deploy', async (req, res) => {
 });
 
 app.listen(process.env.PORT, () => console.log(`Backend server running on port ${process.env.PORT}`));
+app.get("/", (req, res) => {
+  res.send("Salesforce Backend Running Successfully");
+});
