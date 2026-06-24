@@ -98,25 +98,39 @@ app.post("/api/toggle/:id", async (req, res) => {
 
 // 4. Update/Deploy Validation Rule State
 app.post('/api/validation-rules/deploy', async (req, res) => {
-  try {
-    console.log("DEPLOY REQUEST:");
-    console.log(req.body);
+  const { rules } = req.body;
 
+  console.log("DEPLOY API HIT");
+  console.log("DEPLOY REQUEST:", req.body);
+
+  try {
     const conn = getSfConnection();
+
+    const updateRecords = rules.map(rule => ({
+      Id: rule.id,
+      Metadata: {
+        active: rule.active
+      }
+    }));
 
     const results = await conn.tooling.update(
       'ValidationRule',
-      req.body.rules
+      updateRecords
     );
 
     console.log("DEPLOY RESULT:");
-    console.log(results);
+    console.log(JSON.stringify(results, null, 2));
 
-    res.json(results);
-  } catch (err) {
+    res.json({ success: true, results });
+
+  } catch (error) {
     console.error("DEPLOY ERROR:");
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 });
 
