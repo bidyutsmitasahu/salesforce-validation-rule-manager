@@ -43,7 +43,7 @@ sfTokenStore = {
 
 console.log(sfTokenStore);
 
-   res.redirect('http://localhost:3000/?status=success');
+   res.redirect('https://sfvalidation.netlify.app/?status=success');
 
   } catch (err) {
     console.error("AUTHORIZE ERROR:");
