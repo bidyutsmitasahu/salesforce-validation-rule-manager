@@ -5,7 +5,7 @@ const BACKEND_URL = 'https://salesforce-backend-253g.onrender.com';
 
 function App() {
   const [rules, setRules] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deploying, setDeploying] = useState(false);
 
@@ -105,7 +105,11 @@ function App() {
       </header>
 
       <main style={{ marginTop: '30px' }}>
-{ loading ? (
+        {!isLoggedIn ? (
+          <div style={{ textAlign: 'center', padding: '50px', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+            <p style={{ color: '#546e7a' }}>Please log in to capture and alter organization operational parameters.</p>
+          </div>
+        ) : loading ? (
           <p>Gathering organization configuration schema metadata...</p>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
