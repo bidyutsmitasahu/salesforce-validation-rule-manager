@@ -43,7 +43,7 @@ sfTokenStore = {
 
 console.log(sfTokenStore);
 
-   res.redirect('http://localhost:3000/?status=success');
+   res.redirect('https://sfvalidation.netlify.app/?status=success');
 
   } catch (err) {
     console.error("AUTHORIZE ERROR:");
@@ -133,4 +133,10 @@ app.post('/api/validation-rules/deploy', async (req, res) => {
     });
   }
 });
-app.listen(process.env.PORT, () => console.log(`Backend server running on port ${process.env.PORT}`));
+app.get("/", (req, res) => {
+  res.send("Salesforce Backend Running Successfully");
+});
+
+app.listen(process.env.PORT, () => {
+  console.log(`Backend server running on port ${process.env.PORT}`);
+});
