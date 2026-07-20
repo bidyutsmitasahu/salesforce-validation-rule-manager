@@ -1,10 +1,15 @@
 require('dotenv').config();
+console.log("Mongo URI =", process.env.MONGODB_URI);
+const mongoose = require("mongoose");
+const Organization = require("./models/Organization");
+mongoose.connect(process.env.MONGODB_URI, {serverSelectionTimeoutMS: 10000})
+.then(() => {console.log("✅ MongoDB Connected");})
+.catch((err) => {console.error("❌ MongoDB Connection Error:", err);});
 console.log('CLIENT_ID:', process.env.SF_CLIENT_ID);
 console.log('REDIRECT_URI:', process.env.SF_REDIRECT_URI);
 console.log('LOGIN_URL:', process.env.SF_LOGIN_URL);
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const app = express();
 const jsforce = require('jsforce');
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
@@ -33,9 +38,29 @@ app.get('/oauth/callback', async (req, res) => {
     console.log("AUTH CODE:", code);
     console.log("BEFORE AUTHORIZE");
     await conn.authorize(code);
+    console.log("oauth callback reached");
     console.log("AFTER AUTHORIZE");
     console.log("ACCESS TOKEN:", conn.accessToken);
     console.log("INSTANCE URL:", conn.instanceUrl);
+    const identity = await conn.identity();
+console.log(identity);
+const org = await Organization.findOneAndUpdate(
+  { orgId: identity.organization_id },
+  {
+    orgId: identity.organization_id,
+    orgName: identity.organization_id,
+    instanceUrl: conn.instanceUrl,
+    accessToken: conn.accessToken,
+    refreshToken: conn.refreshToken || "",
+    loginUrl: process.env.SF_LOGIN_URL
+  },
+  {
+    upsert: true,
+    new: true
+  }
+);
+
+console.log("Organization saved:", org);
 sfTokenStore = {
   accessToken: conn.accessToken,
   instanceUrl: conn.instanceUrl
