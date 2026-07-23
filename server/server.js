@@ -1,7 +1,7 @@
 require('dotenv').config();
 console.log("Mongo URI =", process.env.MONGODB_URI);
 const mongoose = require("mongoose");
-const Organization = require("./models/Organization");
+const organization = require("./models/organization");
 mongoose.connect(process.env.MONGODB_URI, {serverSelectionTimeoutMS: 10000})
 .then(() => {console.log("✅ MongoDB Connected");})
 .catch((err) => {console.error("❌ MongoDB Connection Error:", err);});
@@ -42,9 +42,9 @@ app.get('/oauth/callback', async (req, res) => {
     console.log("AFTER AUTHORIZE");
     console.log("ACCESS TOKEN:", conn.accessToken);
     console.log("INSTANCE URL:", conn.instanceUrl);
-    const identity = await conn.identity();
-console.log(identity);
-const org = await Organization.findOneAndUpdate(
+    const userInfo = await conn.request("/services/oauth2/userinfo");
+console.log(userInfo);
+const org = await organization.findOneAndUpdate(
   { orgId: identity.organization_id },
   {
     orgId: identity.organization_id,
