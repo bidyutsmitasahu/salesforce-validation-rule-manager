@@ -11,6 +11,8 @@ const jsforce = require("jsforce");
 
 const unzipper = require("unzipper");
 const archiver = require("archiver");
+console.log("ARCHIVER TYPE:", typeof archiver);
+console.log("ARCHIVER:", archiver);
 const xml2js = require("xml2js");
 
 const Organization = require("./models/organization");
