@@ -310,19 +310,48 @@ app.post("/api/validation-rules/deploy", async (req, res) => {
             zipPath,
             Buffer.from(retrieveResult.zipFile, "base64")
         );
+// Extract ZIP
+await extractZip(zipPath, tempDir);
+console.log("Files after extraction:");
+console.log(fs.readdirSync(tempDir, { recursive: true }));
+// Print every extracted file
+function printFiles(dir) {
+    fs.readdirSync(dir).forEach(file => {
+        const fullPath = path.join(dir, file);
 
-        // Extract ZIP
-        await extractZip(zipPath, tempDir);
+        if (fs.statSync(fullPath).isDirectory()) {
+            printFiles(fullPath);
+        } else {
+            console.log(fullPath);
+        }
+    });
+}
 
-        const objectFile = path.join(
-            tempDir,
-            "unpackaged",
-            "objects",
-            "Account.object"
-        );
+console.log("===== Extracted Files =====");
+printFiles(tempDir);
+console.log("===========================");
 
-        if (!fs.existsSync(objectFile)) {
-            throw new Error("Account.object not found.");
+// Verify package.xml
+const packageXml = path.join(
+    tempDir,
+    "unpackaged",
+    "package.xml"
+);
+
+if (!fs.existsSync(packageXml)) {
+    throw new Error("package.xml not found after extraction");
+}
+
+// Verify Account.object
+const objectFile = path.join(
+    tempDir,
+    "unpackaged",
+    "objects",
+    "Account.object"
+);
+
+if (!fs.existsSync(objectFile)) {
+    throw new Error("Account.object not found.");
         }
 
         const parser = new xml2js.Parser();
