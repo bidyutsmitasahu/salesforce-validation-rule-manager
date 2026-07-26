@@ -282,12 +282,6 @@ app.post("/api/validation-rules/deploy", async (req, res) => {
         const conn = getSfConnection();
         const { rules } = req.body;
 
-        const os = require("os");
-        const fs = require("fs");
-        const path = require("path");
-        const xml2js = require("xml2js");
-        const archiver = require("archiver");
-
         const tempDir = path.join(os.tmpdir(), "sf-metadata-" + Date.now());
         fs.mkdirSync(tempDir, { recursive: true });
 
