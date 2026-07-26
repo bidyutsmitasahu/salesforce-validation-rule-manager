@@ -354,9 +354,6 @@ if (!fs.existsSync(objectFile)) {
     throw new Error("Account.object not found.");
         }
 
-        const parser = new xml2js.Parser();
-        const builder = new xml2js.Builder();
-
         const xml = fs.readFileSync(objectFile, "utf8");
         const metadata = await parser.parseStringPromise(xml);
 
