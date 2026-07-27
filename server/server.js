@@ -356,14 +356,25 @@ if (!fs.existsSync(objectFile)) {
         }
 
         const xml = fs.readFileSync(objectFile, "utf8");
-        const metadata = await parser.parseStringPromise(xml);
 
-        const validationRules =
-    metadata.CustomObject.validationRules?.[0]?.validationRule || [];
+const metadata = await parser.parseStringPromise(xml);
 
 
-console.log("VALIDATION RULES FROM XML:");
-console.log(validationRules);
+console.log(
+    "XML VALIDATION RULES:"
+);
+
+console.log(
+    JSON.stringify(
+        metadata.CustomObject.validationRules,
+        null,
+        2
+    )
+);
+
+
+const validationRules =
+    metadata.CustomObject.validationRules || [];
 
 
 for (const deployRule of rules) {
@@ -371,11 +382,9 @@ for (const deployRule of rules) {
     const fullName = deployRule.fullName.replace("Account.", "");
 
     const rule = validationRules.find(
-        r =>
-            r.fullName &&
-            r.fullName[0] === fullName
+        r => r.fullName &&
+             r.fullName[0] === fullName
     );
-
 
     if (rule) {
 
@@ -386,13 +395,10 @@ for (const deployRule of rules) {
             deployRule.active
         );
 
-
         rule.active = [
             deployRule.active ? "true" : "false"
         ];
-
     }
-
 }
 
         fs.writeFileSync(
