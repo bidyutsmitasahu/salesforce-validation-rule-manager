@@ -359,15 +359,16 @@ if (!fs.existsSync(objectFile)) {
         const metadata = await parser.parseStringPromise(xml);
 
         const validationRules =
-            metadata.CustomObject.validationRules || [];
+    metadata.CustomObject.validationRules?.[0] || [];
 
         for (const deployRule of rules) {
 
             const fullName = deployRule.fullName.replace("Account.", "");
 
             const rule = validationRules.find(
-                r => r.fullName[0] === fullName
-            );
+    r => r.fullName &&
+         r.fullName[0] === fullName
+);
 
             if (rule) {
                 rule.active = [
@@ -380,39 +381,65 @@ if (!fs.existsSync(objectFile)) {
             objectFile,
             builder.buildObject(metadata)
         );
+console.log(
+    "UPDATED ACCOUNT OBJECT:"
+);
 
-        // Create deployment ZIP
-        const deployZip = path.join(tempDir, "deploy.zip");
+console.log(
+    fs.readFileSync(objectFile,"utf8")
+);
+    // Create correct Salesforce deployment ZIP
 
-        await new Promise((resolve, reject) => {
+const deployDir = path.join(tempDir, "deploy");
 
-            const output = fs.createWriteStream(deployZip);
+fs.mkdirSync(deployDir, { recursive: true });
 
-            const archive = archiver("zip", {
-                zlib: { level: 9 }
-            });
 
-            output.on("close", resolve);
-            archive.on("error", reject);
+// Copy package.xml
+fs.mkdirSync(
+    path.join(deployDir, "objects"),
+    { recursive:true }
+);
 
-            archive.pipe(output);
+fs.copyFileSync(
+    packageXml,
+    path.join(deployDir, "package.xml")
+);
 
-            archive.directory(
-                path.join(tempDir, "unpackaged"),
-                false
-            );
 
-            archive.finalize();
+// Copy Account.object
+fs.copyFileSync(
+    objectFile,
+    path.join(
+        deployDir,
+        "objects",
+        "Account.object"
+    )
+);
 
-        });
+
+const deployZip = path.join(tempDir, "deploy.zip");
+
+
+await createZip(
+    deployDir,
+    deployZip
+);
+
+
+console.log("DEPLOY ZIP CREATED");
+
+console.log(
+    fs.readdirSync(deployDir, {recursive:true})
+);
+
 
         const deployBase64 = fs
             .readFileSync(deployZip)
             .toString("base64");
 
         const deploy = conn.metadata.deploy(deployBase64);
-
-        const deployResult = await deploy.complete();
+        const deployResult = await deploy.complete({details:true});
 
         console.log("DEPLOY RESULT");
         console.dir(deployResult, { depth: null });
