@@ -359,23 +359,41 @@ if (!fs.existsSync(objectFile)) {
         const metadata = await parser.parseStringPromise(xml);
 
         const validationRules =
-    metadata.CustomObject.validationRules?.[0] || [];
+    metadata.CustomObject.validationRules?.[0]?.validationRule || [];
 
-        for (const deployRule of rules) {
 
-            const fullName = deployRule.fullName.replace("Account.", "");
+console.log("VALIDATION RULES FROM XML:");
+console.log(validationRules);
 
-            const rule = validationRules.find(
-    r => r.fullName &&
-         r.fullName[0] === fullName
-);
 
-            if (rule) {
-                rule.active = [
-                    deployRule.active ? "true" : "false"
-                ];
-            }
-        }
+for (const deployRule of rules) {
+
+    const fullName = deployRule.fullName.replace("Account.", "");
+
+    const rule = validationRules.find(
+        r =>
+            r.fullName &&
+            r.fullName[0] === fullName
+    );
+
+
+    if (rule) {
+
+        console.log(
+            "Updating:",
+            fullName,
+            "=>",
+            deployRule.active
+        );
+
+
+        rule.active = [
+            deployRule.active ? "true" : "false"
+        ];
+
+    }
+
+}
 
         fs.writeFileSync(
             objectFile,
