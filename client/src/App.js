@@ -35,11 +35,12 @@ function App() {
       const data = await res.json();
       // Map API architecture into local structured state
       setRules(data.map(r => ({
-        id: r.Id,
-        name: r.ValidationName,
-        active: r.Active,
-        originalActive: r.Active // Track staging differences
-      })));
+  id: r.id,
+  fullName: r.fullName,
+  name: r.name,
+  active: r.active,
+  originalActive: r.active
+})));
     } catch (err) {
       alert('Failed fetching validation rules.');
     } finally {
@@ -69,7 +70,11 @@ function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          rules: dirtyRules.map(r => ({ id: r.id, active: r.active }))
+          rules: dirtyRules.map(r => ({
+  id: r.id,
+  fullName: r.fullName,
+  active: r.active
+}))
         })
       });
       const data = await res.json();
