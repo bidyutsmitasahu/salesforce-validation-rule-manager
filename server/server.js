@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
 const jsforce = require("jsforce");
 
 const unzipper = require("unzipper");
-const archiver = require("archiver").default;
+const archiver = require("archiver");
 console.log("ARCHIVER TYPE:", typeof archiver);
 console.log("ARCHIVER:", archiver);
 const xml2js = require("xml2js");
@@ -99,7 +99,7 @@ app.get("/oauth/callback", async (req, res) => {
 
             {
                 upsert: true,
-                new: true
+                returnDocument: "after"
             }
 
         );
@@ -254,7 +254,6 @@ const builder = new xml2js.Builder({
         encoding: "UTF-8"
 
     }
-
 });
 
 
