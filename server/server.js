@@ -412,9 +412,7 @@ if (!fs.existsSync(objectFile)) {
 
         const deploy = conn.metadata.deploy(deployBase64);
 
-        const deployResult = await deploy.complete({
-            details: true
-        });
+        const deployResult = await deploy.complete();
 
         console.log("DEPLOY RESULT");
         console.dir(deployResult, { depth: null });
