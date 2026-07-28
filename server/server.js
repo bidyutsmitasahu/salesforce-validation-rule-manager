@@ -464,9 +464,7 @@ console.log(
 
         const deploy = conn.metadata.deploy(deployBase64);
 
-const deployResult = await deploy.complete({
-    timeout: 300000
-});
+const deployResult = await deploy.complete();
 
 console.log("DEPLOY RESULT:");
 console.log(JSON.stringify(deployResult, null, 2));
