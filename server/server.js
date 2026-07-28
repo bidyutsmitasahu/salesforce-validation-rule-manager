@@ -463,15 +463,20 @@ console.log(
             .toString("base64");
 
         const deploy = conn.metadata.deploy(deployBase64);
-        const deployResult = await deploy.complete({details:true});
 
-        console.log("DEPLOY RESULT");
-        console.dir(deployResult, { depth: null });
+const deployResult = await deploy.complete(timeout: 300000);
 
-        res.json({
-            success: deployResult.success,
-            deployResult
-        });
+console.log("DEPLOY RESULT:");
+console.log(JSON.stringify(deployResult, null, 2));
+
+if (!deployResult.success) {
+    console.log(deployResult.details);
+}
+
+res.json({
+    success: deployResult.success,
+    deployResult
+});
 
     } catch (err) {
         console.error(err);
