@@ -9,6 +9,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [deploying, setDeploying] = useState(false);
 const [org, setOrg] = useState(null);
+  const [search, setSearch] = useState("");
+  const [lastDeploy, setLastDeploy] = useState(null);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('status') === 'success') {
@@ -64,6 +66,13 @@ const fetchOrg = async () => {
   };
 
   const deployChanges = async () => {
+    if (
+  !window.confirm(
+    "Deploy changes to Salesforce?"
+  )
+) {
+  return;
+}
     setDeploying(true);
     // Filter only modified rules to optimize the deployment payload [cite: 7]
     const dirtyRules = rules.filter(r => r.active !== r.originalActive);
@@ -89,6 +98,7 @@ const fetchOrg = async () => {
       const data = await res.json();
       if (data.success) {
         alert('Metadata changes deployed to Salesforce successfully!');
+        setLastDeploy(new Date());
         fetchRules();
       }
     } catch (err) {
@@ -97,11 +107,20 @@ const fetchOrg = async () => {
       setDeploying(false);
     }
   };
+const active =
+  rules.filter(r => r.active).length;
 
+const inactive =
+  rules.length - active;
   return (
     <div style={{ fontFamily: 'Segoe UI, sans-serif', padding: '40px', backgroundColor: '#f4f6f9', minHeight: '100vh' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #e1e4e8', paddingBottom: '20px' }}>
-        <h2>Salesforce Validation Switchboard</h2>
+        <h2>
+Salesforce Validation Rule Manager
+</h2>
+<span style={{color:"green"}}>
+🟢 Connected
+</span>
         {!isLoggedIn ? (
           <button onClick={handleLogin} style={{ padding: '10px 20px', backgroundColor: '#0070d2', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
             Login to Salesforce Org 
@@ -147,13 +166,65 @@ const fetchOrg = async () => {
     </p>
   </div>
 )}
+{lastDeploy && (
+  <p>
+    Last Deployment:
+    {lastDeploy.toLocaleString()}
+  </p>
+)}
         {!isLoggedIn ? (
           <div style={{ textAlign: 'center', padding: '50px', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
             <p style={{ color: '#546e7a' }}>Please log in to capture and alter organization operational parameters.</p>
           </div>
         ) : loading ? (
-          <p>Gathering organization configuration schema metadata...</p>
+          <div
+  style={{
+    textAlign: "center",
+    padding: "40px",
+    fontSize: "18px",
+    color: "#0070d2"
+  }}
+>
+  <RefreshCw
+    size={20}
+    className="spin"
+    style={{ marginRight: "10px" }}
+  />
+  Loading validation rules...
+</div>
         ) : (
+          <input
+      type="text"
+      placeholder="Search validation rule..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      style={{
+        padding: "10px",
+        width: "300px",
+        marginBottom: "20px",
+        border: "1px solid #ccc",
+        borderRadius: "5px"
+      }}
+    />
+      <div
+  style={{
+    display: "flex",
+    gap: "20px",
+    marginBottom: "20px"
+  }}
+>
+  <div>
+    Total Rules: {rules.length}
+  </div>
+
+  <div>
+    Active: {active}
+  </div>
+
+  <div>
+    Inactive: {inactive}
+  </div>
+</div>
           <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
             <thead>
               <tr style={{ backgroundColor: '#fafafb', borderBottom: '1px solid #e1e4e8', textAlign: 'left' }}>
@@ -164,17 +235,43 @@ const fetchOrg = async () => {
               </tr>
             </thead>
             <tbody>
-              {rules.map(rule => (
+              {rules
+    .filter(rule =>
+      rule.name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    )
+    .map(rule => (
                 <tr key={rule.id} style={{ borderBottom: '1px solid #e1e4e8' }}>
                   <td style={{ padding: '15px', color: '#546e7a', fontSize: '13px' }}>{rule.id}</td>
                   <td style={{ padding: '15px', fontWeight: '600' }}>{rule.name}</td>
                   <td style={{ padding: '15px' }}>
-                    {rule.originalActive ? (
-                      <span style={{ color: '#2e7d32', display: 'flex', alignItems: 'center', gap: '5px' }}><CheckCircle size={16}/> Active</span>
-                    ) : (
-                      <span style={{ color: '#c62828', display: 'flex', alignItems: 'center', gap: '5px' }}><XCircle size={16}/> Inactive</span>
-                    )}
-                  </td>
+  {rule.active ? (
+    <span
+      style={{
+        backgroundColor: "#d4edda",
+        color: "#155724",
+        padding: "5px 10px",
+        borderRadius: "20px",
+        fontWeight: "bold"
+      }}
+    >
+      🟢 Active
+    </span>
+  ) : (
+    <span
+      style={{
+        backgroundColor: "#f8d7da",
+        color: "#721c24",
+        padding: "5px 10px",
+        borderRadius: "20px",
+        fontWeight: "bold"
+      }}
+    >
+      🔴 Inactive
+    </span>
+  )}
+</td>
                   <td style={{ padding: '15px' }}>
                     <button onClick={() => toggleRule(rule.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: rule.active ? '#0070d2' : '#90a4ae' }}>
                       {rule.active ? <ToggleRight size={36} /> : <ToggleLeft size={36} />}
