@@ -141,6 +141,27 @@ function getSfConnection() {
     });
 
 }
+app.get("/api/org", async (req, res) => {
+    try {
+        const conn = getSfConnection();
+
+        const identity = await conn.identity();
+
+        res.json({
+            orgName: "Developer Edition",
+            instanceUrl: conn.instanceUrl,
+            connected: true,
+            orgId: identity.organization_id
+        });
+
+    } catch (err) {
+
+        res.json({
+            connected: false
+        });
+
+    }
+});
 // ---------------- Fetch Validation Rules ----------------
 
 app.get("/api/validation-rules", async (req, res) => {
