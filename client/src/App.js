@@ -118,16 +118,13 @@ const inactive =
         <h2>
 Salesforce Validation Rule Manager
 </h2>
-<span style={{color:"green"}}>
-🟢 Connected
-</span>
         {!isLoggedIn ? (
           <button onClick={handleLogin} style={{ padding: '10px 20px', backgroundColor: '#0070d2', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
             Login to Salesforce Org 
           </button>
         ) : (
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={fetchRules} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#fff', border: '1px solid #d8ddedd', borderRadius: '4px', cursor: 'pointer' }}>
+            <button onClick{() => {fetchOrg();fetchRules();}} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#fff', border: '1px solid #d8ddedd', borderRadius: '4px', cursor: 'pointer' }}>
               <RefreshCw size={16} className={loading ? 'spin' : ''} /> Fetch Rules [cite: 6]
             </button>
             <button onClick={deployChanges} disabled={deploying} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
@@ -138,7 +135,9 @@ Salesforce Validation Rule Manager
       </header>
 
       <main style={{ marginTop: '30px' }}>
-{isLoggedIn && org && (
+{isLoggedIn && org && (<span style={{color:"green"}}>
+🟢 Connected
+</span>
   <div
     style={{
       background: "#fff",
@@ -192,7 +191,7 @@ Salesforce Validation Rule Manager
   />
   Loading validation rules...
 </div>
-        ) : (
+        ) : ( <>
           <input
       type="text"
       placeholder="Search validation rule..."
@@ -230,8 +229,8 @@ Salesforce Validation Rule Manager
               <tr style={{ backgroundColor: '#fafafb', borderBottom: '1px solid #e1e4e8', textAlign: 'left' }}>
                 <th style={{ padding: '15px' }}>Rule Target Metadata ID</th>
                 <th style={{ padding: '15px' }}>Validation Rule Label Name</th>
-                <th style={{ padding: '15px' }}>Live State Status [cite: 6]</th>
-                <th style={{ padding: '15px' }}>Staging Action [cite: 6]</th>
+                <th style={{ padding: '15px' }}>Live State Status</th>
+                <th style={{ padding: '15px' }}>Staging Action</th>
               </tr>
             </thead>
             <tbody>
@@ -280,7 +279,7 @@ Salesforce Validation Rule Manager
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table> </>
         )}
       </main>
     </div>
