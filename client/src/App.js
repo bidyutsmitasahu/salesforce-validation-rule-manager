@@ -99,6 +99,7 @@ const fetchOrg = async () => {
       if (data.success) {
         alert('Metadata changes deployed to Salesforce successfully!');
         setLastDeploy(new Date());
+        fetchOrg();
         fetchRules();
       }
     } catch (err) {
@@ -124,7 +125,7 @@ Salesforce Validation Rule Manager
           </button>
         ) : (
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick{() => {fetchOrg();fetchRules();}} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#fff', border: '1px solid #d8ddedd', borderRadius: '4px', cursor: 'pointer' }}>
+            <button onClick={() => {fetchOrg();fetchRules();}} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#fff', border: '1px solid #d8dde6', borderRadius: '4px', cursor: 'pointer' }}>
               <RefreshCw size={16} className={loading ? 'spin' : ''} /> Fetch Rules [cite: 6]
             </button>
             <button onClick={deployChanges} disabled={deploying} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
@@ -135,7 +136,9 @@ Salesforce Validation Rule Manager
       </header>
 
       <main style={{ marginTop: '30px' }}>
-{isLoggedIn && org && (<span style={{color:"green"}}>
+{isLoggedIn && org && (
+  <>
+  <span style={{color:"green"}}>
 🟢 Connected
 </span>
   <div
@@ -164,6 +167,7 @@ Salesforce Validation Rule Manager
       </span>
     </p>
   </div>
+          </>
 )}
 {lastDeploy && (
   <p>
