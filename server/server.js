@@ -497,6 +497,9 @@ const deployResult = await deploy.complete();
 console.log("DEPLOY RESULT:");
 console.log(JSON.stringify(deployResult, null, 2));
 
+  console.log("DEPLOY DETAILS:");
+console.log(JSON.stringify(deployResult.details, null, 2));
+    
 if (!deployResult.success) {
     console.log("Deployment failed");
     console.log(JSON.stringify(deployResult, null, 2));
