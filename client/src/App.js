@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ToggleLeft, ToggleRight, RefreshCw, CloudLightning, CheckCircle, XCircle } from 'lucide-react';
+import { ToggleLeft, ToggleRight, RefreshCw, CloudLightning} from 'lucide-react';
 
 const BACKEND_URL = 'https://salesforce-backend-253g.onrender.com';
 
@@ -99,15 +99,11 @@ const fetchOrg = async () => {
       if (data.success) {
         alert('Metadata changes deployed to Salesforce successfully!');
         setLastDeploy(new Date());
-        setRules(prev =>
-    prev.map(rule => ({
-      ...rule,
-      originalActive: rule.active
-    }))
-  );
         fetchOrg();
         fetchRules();
-      }
+        
+      }else {
+    alert(data.error || "Deployment failed.");
     } catch (err) {
       alert('Deployment failed.');
     } finally {
