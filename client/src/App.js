@@ -212,16 +212,43 @@ Salesforce Validation Rule Manager
     marginBottom: "20px"
   }}
 >
-  <div>
-    Total Rules: {rules.length}
+  <div
+    style={{
+      background: "#fff",
+      padding: "15px",
+      borderRadius: "8px",
+      boxShadow: "0 2px 4px rgba(0,0,0,.1)"
+    }}
+  >
+    <strong>Total Rules</strong>
+    <br />
+    {rules.length}
   </div>
 
-  <div>
-    Active: {active}
+  <div
+    style={{
+      background: "#fff",
+      padding: "15px",
+      borderRadius: "8px",
+      boxShadow: "0 2px 4px rgba(0,0,0,.1)"
+    }}
+  >
+    <strong>Active</strong>
+    <br />
+    {active}
   </div>
 
-  <div>
-    Inactive: {inactive}
+  <div
+    style={{
+      background: "#fff",
+      padding: "15px",
+      borderRadius: "8px",
+      boxShadow: "0 2px 4px rgba(0,0,0,.1)"
+    }}
+  >
+    <strong>Inactive</strong>
+    <br />
+    {inactive}
   </div>
 </div>
           <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
