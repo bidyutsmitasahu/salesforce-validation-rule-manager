@@ -492,7 +492,9 @@ console.log(fs.readFileSync(packageXml, "utf8"));
 });
 
 console.log("Starting deployment...");
-const deployResult = await deploy.complete();      
+const deployResult = await deploy.complete({
+    details: true
+});      
 
 console.log("DEPLOY RESULT:");
 console.log(JSON.stringify(deployResult, null, 2));
