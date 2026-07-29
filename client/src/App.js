@@ -8,13 +8,14 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deploying, setDeploying] = useState(false);
-
+const [org, setOrg] = useState(null);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('status') === 'success') {
       setIsLoggedIn(true);
       window.history.replaceState({}, document.title, "/");
-      fetchRules();
+      fetchOrg();
+fetchRules();
     }
   }, []);
 
@@ -27,7 +28,15 @@ function App() {
       alert('Authentication initialization failed.');
     }
   };
-
+const fetchOrg = async () => {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/org`);
+    const data = await res.json();
+    setOrg(data);
+  } catch (err) {
+    console.log(err);
+  }
+};
   const fetchRules = async () => {
     setLoading(true);
     try {
@@ -110,6 +119,34 @@ function App() {
       </header>
 
       <main style={{ marginTop: '30px' }}>
+{isLoggedIn && org && (
+  <div
+    style={{
+      background: "#fff",
+      padding: "20px",
+      marginBottom: "20px",
+      borderRadius: "8px",
+      boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+    }}
+  >
+    <h3>Salesforce Connected</h3>
+
+    <p>
+      <strong>Organization:</strong> {org.orgName}
+    </p>
+
+    <p>
+      <strong>Instance URL:</strong> {org.instanceUrl}
+    </p>
+
+    <p>
+      <strong>Status:</strong>{" "}
+      <span style={{ color: "green" }}>
+        🟢 Connected
+      </span>
+    </p>
+  </div>
+)}
         {!isLoggedIn ? (
           <div style={{ textAlign: 'center', padding: '50px', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
             <p style={{ color: '#546e7a' }}>Please log in to capture and alter organization operational parameters.</p>
