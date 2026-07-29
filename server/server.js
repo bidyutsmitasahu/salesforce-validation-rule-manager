@@ -456,15 +456,23 @@ console.log("DEPLOY ZIP CREATED");
 console.log(
     fs.readdirSync(deployDir, {recursive:true})
 );
+console.log("Deploy ZIP exists:", fs.existsSync(deployZip));
+console.log("Deploy ZIP size:", fs.statSync(deployZip).size, "bytes");
 
+console.log("PACKAGE.XML:");
+console.log(fs.readFileSync(packageXml, "utf8"));
 
         const deployBase64 = fs
             .readFileSync(deployZip)
             .toString("base64");
 
-        const deploy = conn.metadata.deploy(deployBase64);
+  const deploy = conn.metadata.deploy(deployBase64, {
+    rollbackOnError: true
+});
 
-const deployResult = await deploy.complete();
+const deployResult = await deploy.complete({
+    details: true
+});      
 
 console.log("DEPLOY RESULT:");
 console.log(JSON.stringify(deployResult, null, 2));
