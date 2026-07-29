@@ -137,7 +137,7 @@ Salesforce Validation Rule Manager
             <button onClick={() => {fetchOrg();fetchRules();}} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#fff', border: '1px solid #d8dde6', borderRadius: '4px', cursor: 'pointer' }}>
               <RefreshCw size={16} className={loading ? 'spin' : ''} /> Fetch Rules
             </button>
-            <button onClick={deployChanges} disabled={deploying} style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+            <button onClick={deployChanges} disabled={ deploying || loading } style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
               <CloudLightning size={16} /> {deploying ? 'Deploying...' : 'Deploy Changes'}
             </button>
           </div>
