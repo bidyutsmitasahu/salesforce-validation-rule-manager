@@ -84,30 +84,37 @@ const fetchOrg = async () => {
     }
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/validation-rules/deploy`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          rules: dirtyRules.map(r => ({
-  id: r.id,
-  fullName: r.fullName,
-  active: r.active
-}))
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert('Metadata changes deployed to Salesforce successfully!');
-        setLastDeploy(new Date());
-        fetchOrg();
-        fetchRules();
-        
-      }else {
+  const res = await fetch(`${BACKEND_URL}/api/validation-rules/deploy`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      rules: dirtyRules.map(r => ({
+        id: r.id,
+        fullName: r.fullName,
+        active: r.active
+      }))
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    alert("Metadata changes deployed successfully!");
+
+    setLastDeploy(new Date());
+
+    fetchOrg();
+    fetchRules();
+  } else {
     alert(data.error || "Deployment failed.");
-    } catch (err) {
-      alert('Deployment failed.');
-    } finally {
-      setDeploying(false);
+  }
+
+} catch (err) {
+  alert("Deployment failed.");
+} finally {
+  setDeploying(false);
     }
   };
 const active =
