@@ -477,7 +477,8 @@ console.log("DEPLOY RESULT:");
 console.log(JSON.stringify(deployResult, null, 2));
 
 if (!deployResult.success) {
-    console.log(deployResult.details);
+    console.log("Deployment failed");
+    console.log(JSON.stringify(deployResult, null, 2));
 }
 
 res.json({
