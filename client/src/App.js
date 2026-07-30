@@ -64,7 +64,23 @@ const fetchOrg = async () => {
       rule.id === id ? { ...rule, active: !rule.active } : rule
     ));
   };
+const enableAll = () => {
+  setRules(prev =>
+    prev.map(rule => ({
+      ...rule,
+      active: true
+    }))
+  );
+};
 
+const disableAll = () => {
+  setRules(prev =>
+    prev.map(rule => ({
+      ...rule,
+      active: false
+    }))
+  );
+};
   const deployChanges = async () => {
     if (
   !window.confirm(
@@ -140,6 +156,33 @@ Salesforce Validation Rule Manager
             <button onClick={deployChanges} disabled={ deploying || loading } style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '10px 15px', backgroundColor: '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
               <CloudLightning size={16} /> {deploying ? 'Deploying...' : 'Deploy Changes'}
             </button>
+          <button
+  onClick={enableAll}
+  style={{
+    padding: "10px 15px",
+    backgroundColor: "#1976d2",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer"
+  }}
+>
+  Enable All
+</button>
+
+<button
+  onClick={disableAll}
+  style={{
+    padding: "10px 15px",
+    backgroundColor: "#d32f2f",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer"
+  }}
+>
+  Disable All
+</button>
           </div>
         )}
       </header>
